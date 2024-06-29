@@ -226,12 +226,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  {
-    'tpope/vim-fugitive', -- Criminal git integration
-    config = function()
-      vim.keymap.set('n', '<leader>g', '<cmd>:Git<CR>')
-    end,
-  },
+  'tpope/vim-fugitive', -- Criminal git integration
   'tpope/vim-obsession', -- Vim sessions
   'tpope/vim-unimpaired', -- Linewise mappings, toggling options, encoding/decoding, jumping
   'tpope/vim-repeat', -- Repeat surround and unimpaired mappings
