@@ -226,10 +226,13 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
+  'famiu/bufdelete.nvim', -- Delete buffers while keeping layout
+  'tpope/vim-eunuch', -- Vim helpers
   'tpope/vim-fugitive', -- Criminal git integration
   'tpope/vim-obsession', -- Vim sessions
   'tpope/vim-unimpaired', -- Linewise mappings, toggling options, encoding/decoding, jumping
   'tpope/vim-repeat', -- Repeat surround and unimpaired mappings
+  'tpope/vim-rsi', -- Readline key bindings in vim
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'tpope/vim-surround',
   {
