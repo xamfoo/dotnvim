@@ -161,6 +161,12 @@ require('lazy').setup({
       'tpope/vim-commentary',
     },
   },
+  { -- Highlight todo, notes, etc in comments
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
   'tpope/vim-commentary', -- Bindings for (un)commenting
   'tpope/vim-eunuch', -- Vim helpers
   'tpope/vim-fugitive', -- Criminal git integration
@@ -673,9 +679,6 @@ require('lazy').setup({
       }
     end,
   },
-
-  -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
