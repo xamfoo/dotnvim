@@ -274,6 +274,11 @@ require('lazy').setup({
       }
     end,
   },
+  {
+    'kylechui/nvim-surround',
+    version = '*', -- Use for stability; omit to use `main` branch for the latest features
+    event = 'VeryLazy',
+  },
   'tpope/vim-commentary', -- Bindings for (un)commenting
   'tpope/vim-eunuch', -- Vim helpers
   'tpope/vim-fugitive', -- Criminal git integration
@@ -282,7 +287,6 @@ require('lazy').setup({
   'tpope/vim-repeat', -- Repeat surround and unimpaired mappings
   'tpope/vim-rsi', -- Readline key bindings in vim
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  'tpope/vim-surround',
   {
     'max397574/better-escape.nvim',
     config = function()
@@ -672,13 +676,6 @@ require('lazy').setup({
       --  - yinq - [Y]ank [I]nside [N]ext [']quote
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
-
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
