@@ -146,6 +146,14 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+  { -- Colorscheme
+    'EdenEast/nightfox.nvim',
+    lazy = false, -- Don't lazy load
+    priority = 1000, -- Load first
+    config = function()
+      vim.cmd.colorscheme 'nightfox'
+    end,
+  },
   'famiu/bufdelete.nvim', -- Delete buffers while keeping layout
   'tpope/vim-eunuch', -- Vim helpers
   'tpope/vim-fugitive', -- Criminal git integration
@@ -667,15 +675,6 @@ require('lazy').setup({
           { name = 'path' },
         },
       }
-    end,
-  },
-
-  {
-    'EdenEast/nightfox.nvim',
-    lazy = false, -- Don't lazy load
-    priority = 1000, -- Load first
-    config = function()
-      vim.cmd.colorscheme 'nightfox'
     end,
   },
 
