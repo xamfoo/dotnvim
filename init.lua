@@ -155,6 +155,13 @@ require('lazy').setup({
     end,
   },
   'famiu/bufdelete.nvim', -- Delete buffers while keeping layout
+  { -- Set `commentstring` based on the treesitter
+    'JoosepAlviste/nvim-ts-context-commentstring',
+    dependencies = {
+      'tpope/vim-commentary',
+    },
+  },
+  'tpope/vim-commentary', -- Bindings for (un)commenting
   'tpope/vim-eunuch', -- Vim helpers
   'tpope/vim-fugitive', -- Criminal git integration
   'tpope/vim-obsession', -- Vim sessions
@@ -186,17 +193,6 @@ require('lazy').setup({
       return vim.fn.executable 'nnn' == 1
     end,
   },
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to force a plugin to be loaded.
-  --
-  --  This is equivalent to:
-  --    require('Comment').setup({})
-
-  -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following lua:
