@@ -628,6 +628,16 @@ require('lazy').setup({
             },
           },
         },
+        pylsp = {
+          settings = {
+            plugins = {
+              pycodestyle = {
+                ignore = { 'W391' },
+                maxLineLength = 79,
+              },
+            },
+          },
+        },
       }
 
       -- Ensure the servers and tools above are installed
