@@ -279,6 +279,24 @@ require('lazy').setup({
     version = '*', -- Use for stability; omit to use `main` branch for the latest features
     event = 'VeryLazy',
   },
+  { -- Replace netrw with nnn for file explorer
+    'luukvbaal/nnn.nvim',
+    cond = function()
+      return vim.fn.executable 'nnn' == 1
+    end,
+    config = function()
+      require('nnn').setup {
+        explorer = {
+          cmd = 'nnn -H',
+        },
+        picker = {
+          cmd = 'nnn -H',
+        },
+        replace_netrw = 'picker',
+      }
+      vim.keymap.set('n', '-', '<cmd>NnnPicker %:p:h<CR>', { silent = true })
+    end,
+  },
   'tpope/vim-commentary', -- Bindings for (un)commenting
   'tpope/vim-eunuch', -- Vim helpers
   'tpope/vim-fugitive', -- Criminal git integration
@@ -293,21 +311,6 @@ require('lazy').setup({
       require('better_escape').setup {
         mapping = { 'jk' },
       }
-    end,
-  },
-  {
-    'mcchrish/nnn.vim',
-    config = function()
-      require('nnn').setup {
-        command = 'nnn -H',
-        set_default_mappings = 0,
-      }
-      vim.keymap.set('n', '-', function()
-        vim.fn['nnn#pick'](vim.fn.expand '%:p:h' .. '/' .. vim.fn.expand '%:p:t')
-      end)
-    end,
-    cond = function()
-      return vim.fn.executable 'nnn' == 1
     end,
   },
 
