@@ -93,7 +93,6 @@ vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.mouse = 'a'
 vim.opt.number = true
-vim.opt.relativenumber = true
 vim.opt.undofile = true
 vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
