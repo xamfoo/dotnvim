@@ -324,7 +324,7 @@ require('lazy').setup({
         },
         replace_netrw = 'picker',
       }
-      vim.keymap.set('n', '-', '<cmd>NnnPicker %:p:h<CR>', { silent = true })
+      vim.keymap.set('n', '-', '<cmd>NnnPicker %<CR>', { silent = true })
     end,
   },
   { -- Set escape keys with minimal delay
