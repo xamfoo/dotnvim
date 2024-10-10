@@ -385,11 +385,6 @@ require('lazy').setup({
                     j = '<Esc>',
                 },
             },
-            v = {
-                j = {
-                    k = '<Esc>',
-                },
-            },
             s = {
                 j = {
                     k = '<Esc>',
