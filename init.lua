@@ -394,6 +394,34 @@ require('lazy').setup({
       }
     end,
   },
+  { 'SidOfc/mkdx', -- Mappings for editing markdown
+    init = function()
+      vim.g["mkdx#settings"] = {
+        checkbox = { toggles = { ' ', 'x' } },
+        map = { enable = 0 },
+      }
+    end,
+    config = function()
+      vim.keymap.set(
+        'n', '<leader>tx', '<Plug>(mkdx-checkbox-prev-n)',
+        { noremap = true, silent = true })
+      vim.keymap.set(
+        'v', '<leader>tx', '<Plug>(mkdx-checkbox-prev-n)',
+        { noremap = true, silent = true })
+      vim.keymap.set(
+        'n', '<leader>t[', '<Plug>(mkdx-toggle-checkbox-n)',
+        { noremap = true, silent = true })
+      vim.keymap.set(
+        'v', '<leader>t[', '<Plug>(mkdx-toggle-checkbox-n)',
+        { noremap = true, silent = true })
+      vim.keymap.set(
+        'n', '<leader>t-', '<Plug>(mkdx-toggle-list-n)',
+        { noremap = true, silent = true })
+      vim.keymap.set(
+        'v', '<leader>t-', '<Plug>(mkdx-toggle-list-n)',
+        { noremap = true, silent = true })
+    end,
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     opts = {
