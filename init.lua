@@ -100,6 +100,7 @@ vim.opt.scrolloff = 1
 vim.opt.sidescroll = 1
 vim.opt.sidescrolloff = 2
 vim.opt.signcolumn = 'yes'
+vim.opt.swapfile = false
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
