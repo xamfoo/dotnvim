@@ -109,10 +109,25 @@ vim.opt.swapfile = false
 vim.keymap.set('n', '/', '/\\c', { silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set(
+  'n',
+  '[d',
+  vim.diagnostic.goto_prev,
+  { desc = 'Go to previous [D]iagnostic message' }
+)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set(
+  'n',
+  '<leader>e',
+  vim.diagnostic.open_float,
+  { desc = 'Show diagnostic [E]rror messages' }
+)
+vim.keymap.set(
+  'n',
+  '<leader>q',
+  vim.diagnostic.setloclist,
+  { desc = 'Open diagnostic [Q]uickfix list' }
+)
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -141,7 +156,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+  local out = vim.fn.system {
+    'git',
+    'clone',
+    '--filter=blob:none',
+    '--branch=stable',
+    lazyrepo,
+    lazypath,
+  }
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { 'Failed to clone lazy.nvim:\n', 'ErrorMsg' },
@@ -402,32 +424,51 @@ require('lazy').setup({
     end,
   },
   'mfussenegger/nvim-ansible', -- Configure behavior for Ansible files
-  { 'SidOfc/mkdx', -- Mappings for editing markdown
+  { -- Mappings for editing markdown
+    'SidOfc/mkdx',
     init = function()
-      vim.g["mkdx#settings"] = {
+      vim.g['mkdx#settings'] = {
         checkbox = { toggles = { ' ', 'x' } },
         map = { enable = 0 },
       }
     end,
     config = function()
       vim.keymap.set(
-        'n', '<leader>tx', '<Plug>(mkdx-checkbox-prev-n)',
-        { noremap = true, silent = true })
+        'n',
+        '<leader>tx',
+        '<Plug>(mkdx-checkbox-prev-n)',
+        { noremap = true, silent = true }
+      )
       vim.keymap.set(
-        'v', '<leader>tx', '<Plug>(mkdx-checkbox-prev-n)',
-        { noremap = true, silent = true })
+        'v',
+        '<leader>tx',
+        '<Plug>(mkdx-checkbox-prev-n)',
+        { noremap = true, silent = true }
+      )
       vim.keymap.set(
-        'n', '<leader>t[', '<Plug>(mkdx-toggle-checkbox-n)',
-        { noremap = true, silent = true })
+        'n',
+        '<leader>t[',
+        '<Plug>(mkdx-toggle-checkbox-n)',
+        { noremap = true, silent = true }
+      )
       vim.keymap.set(
-        'v', '<leader>t[', '<Plug>(mkdx-toggle-checkbox-n)',
-        { noremap = true, silent = true })
+        'v',
+        '<leader>t[',
+        '<Plug>(mkdx-toggle-checkbox-n)',
+        { noremap = true, silent = true }
+      )
       vim.keymap.set(
-        'n', '<leader>t-', '<Plug>(mkdx-toggle-list-n)',
-        { noremap = true, silent = true })
+        'n',
+        '<leader>t-',
+        '<Plug>(mkdx-toggle-list-n)',
+        { noremap = true, silent = true }
+      )
       vim.keymap.set(
-        'v', '<leader>t-', '<Plug>(mkdx-toggle-list-n)',
-        { noremap = true, silent = true })
+        'v',
+        '<leader>t-',
+        '<Plug>(mkdx-toggle-list-n)',
+        { noremap = true, silent = true }
+      )
     end,
   },
   { -- Autoformat
@@ -443,7 +484,11 @@ require('lazy').setup({
             if not err then
               local mode = vim.api.nvim_get_mode().mode
               if vim.startswith(string.lower(mode), 'v') then
-                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+                vim.api.nvim_feedkeys(
+                  vim.api.nvim_replace_termcodes('<Esc>', true, false, true),
+                  'n',
+                  true
+                )
               end
             end
           end)
@@ -585,8 +630,18 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set(
+        'n',
+        '<leader>s.',
+        builtin.oldfiles,
+        { desc = '[S]earch Recent Files ("." for repeat)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<leader><leader>',
+        builtin.buffers,
+        { desc = '[ ] Find existing buffers' }
+      )
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -659,11 +714,19 @@ require('lazy').setup({
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          map(
+            '<leader>ds',
+            require('telescope.builtin').lsp_document_symbols,
+            '[D]ocument [S]ymbols'
+          )
 
           -- Fuzzy find all the symbols in your current workspace
           --  Similar to document symbols, except searches over your whole project.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          map(
+            '<leader>ws',
+            require('telescope.builtin').lsp_dynamic_workspace_symbols,
+            '[W]orkspace [S]ymbols'
+          )
 
           -- Rename the variable under your cursor
           --  Most Language Servers support renaming across files, etc.
@@ -706,7 +769,8 @@ require('lazy').setup({
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      capabilities =
+        vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -765,7 +829,7 @@ require('lazy').setup({
       }
 
       -- Manual setup of LSP
-      local lspconfig = require('lspconfig')
+      local lspconfig = require 'lspconfig'
       for lsName, config in pairs(servers) do
         lspconfig[lsName].setup(config)
       end
@@ -780,7 +844,16 @@ require('lazy').setup({
 
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup {
-        ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'nix', 'vim', 'vimdoc' },
+        ensure_installed = {
+          'bash',
+          'c',
+          'html',
+          'lua',
+          'markdown',
+          'nix',
+          'vim',
+          'vimdoc',
+        },
         -- Autoinstall languages that are not installed
         auto_install = true,
         highlight = { enable = true },
