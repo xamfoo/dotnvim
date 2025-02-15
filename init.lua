@@ -504,6 +504,7 @@ require('lazy').setup({
       formatters_by_ft = {
         javascript = { 'eslint_d', 'prettierd', 'prettier', stop_after_first = true },
         lua = { 'stylua' },
+        markdown = { 'markdownlint-cli2' },
         nix = { 'nixfmt' },
         python = function(bufnr)
           if require('conform').get_formatter_info('ruff_format', bufnr).available then
@@ -829,6 +830,7 @@ require('lazy').setup({
             },
           },
         },
+        marksman = {},
         nixd = {},
         pylsp = {},
         terraformls = {},
