@@ -519,9 +519,16 @@ require('lazy').setup({
       },
       formatters = {},
     },
-    init = function()
-      -- If you want the formatexpr, here is the place to set it
-      vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+    config = function()
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = '*',
+        callback = function()
+          local exclude_ft = { markdown = true }
+          if not exclude_ft[vim.bo.filetype] then
+            vim.opt_local.formatexpr = "v:lua.require'conform'.formatexpr()"
+          end
+        end,
+      })
     end,
   },
   'tpope/vim-commentary', -- Bindings for (un)commenting
@@ -857,7 +864,7 @@ require('lazy').setup({
         -- Autoinstall languages that are not installed
         auto_install = true,
         highlight = { enable = true },
-        indent = { enable = true },
+        indent = { enable = true, disable = { 'markdown' } },
       }
 
       -- There are additional nvim-treesitter modules that you can use to interact
