@@ -502,7 +502,7 @@ require('lazy').setup({
     ---@type conform.setupOpts
     opts = {
       formatters_by_ft = {
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascript = { 'eslint_d', 'prettierd', 'prettier', stop_after_first = true },
         lua = { 'stylua' },
         nix = { 'nixfmt' },
         python = function(bufnr)
@@ -512,7 +512,7 @@ require('lazy').setup({
             return { 'isort', 'black' }
           end
         end,
-        typescript = { { 'prettierd', 'prettier', stop_after_first = true } },
+        typescript = { 'eslint_d', 'prettierd', 'prettier', stop_after_first = true },
       },
       default_format_opts = {
         lsp_format = 'fallback',
