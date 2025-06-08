@@ -538,14 +538,53 @@ require('lazy').setup({
       })
     end,
   },
-  'tpope/vim-commentary', -- Bindings for (un)commenting
-  'tpope/vim-eunuch', -- Vim helpers
-  'tpope/vim-fugitive', -- Criminal git integration
-  'tpope/vim-obsession', -- Vim sessions
-  'tpope/vim-unimpaired', -- Linewise mappings, toggling options, encoding/decoding, jumping
-  'tpope/vim-repeat', -- Repeat surround and unimpaired mappings
-  'tpope/vim-rsi', -- Readline key bindings in vim
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  { -- Bindings for (un)commenting
+    'tpope/vim-commentary',
+    -- 64a654e as of 2025-06-08
+    commit = '64a654ef4a20db1727938338310209b6a63f60c9',
+    version = false,
+  },
+  { -- Vim sugar for the UNIX shell commands that need it the most.
+    'tpope/vim-eunuch',
+    -- e86bb79 as of 2025-06-08
+    commit = 'e86bb794a1c10a2edac130feb0ea590a00d03f1e',
+  },
+  { -- Criminal git integration
+    'tpope/vim-fugitive',
+    -- 4a745ea as of 2025-06-08
+    commit = '4a745ea72fa93bb15dd077109afbb3d1809383f2',
+    version = false,
+  },
+  { -- Vim sessions
+    'tpope/vim-obsession',
+    -- ed9dfc7 as of 2025-06-08
+    commit = 'ed9dfc7c2cc917ace8b24f4f9f80a91e05614b63',
+    version = false,
+  },
+  { -- Linewise mappings, toggling options, encoding/decoding, jumping
+    'tpope/vim-unimpaired',
+    -- 6d44a6d as of 2025-06-08
+    commit = '6d44a6dc2ec34607c41ec78acf81657248580bf1',
+    version = false,
+  },
+  { -- Repeat surround and unimpaired mappings
+    'tpope/vim-repeat',
+    -- 6584602 as of 2025-06-08
+    commit = '65846025c15494983dafe5e3b46c8f88ab2e9635',
+    version = false,
+  },
+  { -- Readline key bindings in vim
+    'tpope/vim-rsi',
+    -- 4554063 as of 2025-06-08
+    commit = '45540637ead22f011e8215f1c90142e49d946a54',
+    version = false,
+  },
+  { -- Detect tabstop and shiftwidth automatically
+    'tpope/vim-sleuth',
+    -- be69bff as of 2025-06-08
+    commit = 'be69bff86754b1aa5adcbb527d7fcd1635a84080',
+    version = false,
+  },
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
