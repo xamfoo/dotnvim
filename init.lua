@@ -471,6 +471,12 @@ require('lazy').setup({
       )
     end,
   },
+  { -- A collection of common utilities and functions
+    'nvim-lua/plenary.nvim',
+    -- 857c5ac as of 2025-06-08
+    commit = '857c5ac632080dba10aae49dba902ce3abf91b35',
+    version = false,
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
