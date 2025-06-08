@@ -618,6 +618,8 @@ require('lazy').setup({
             '--no-heading',
             '--smart-case',
             '--with-filename',
+            -- Enable this if you want to search multiline strings
+            -- '--multiline',
           },
         },
         -- pickers = {}
