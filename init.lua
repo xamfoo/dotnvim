@@ -163,6 +163,15 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "org" },
+  callback = function()
+    vim.opt_local.breakindent = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.briopt:append("list:-1")
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
