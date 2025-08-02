@@ -153,24 +153,24 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Set fold method to treesitter if available
-vim.api.nvim_create_autocmd({ "FileType" }, {
+vim.api.nvim_create_autocmd({ 'FileType' }, {
   callback = function()
-    if require("nvim-treesitter.parsers").has_parser() then
-      vim.opt.foldmethod = "expr"
-      vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    if require('nvim-treesitter.parsers').has_parser() then
+      vim.opt.foldmethod = 'expr'
+      vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
     else
-      vim.opt.foldmethod = "syntax"
+      vim.opt.foldmethod = 'syntax'
     end
   end,
 })
 
 --- Better soft wraps for text files
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "markdown", "text", "org" },
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'text', 'org' },
   callback = function()
     vim.opt_local.breakindent = true
     vim.opt_local.linebreak = true
-    vim.opt_local.briopt:append("list:-1")
+    vim.opt_local.briopt:append 'list:-1'
   end,
 })
 
@@ -658,7 +658,7 @@ require('lazy').setup({
         -- 1fb58cc as of 2025-06-08
         commit = '1fb58cca9aebbc4fd32b086cb413548ce132c127',
         version = false,
-        enabled = vim.g.have_nerd_font
+        enabled = vim.g.have_nerd_font,
       },
     },
     config = function()
