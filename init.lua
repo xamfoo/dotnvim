@@ -152,6 +152,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Set fold method to treesitter if available
 vim.api.nvim_create_autocmd({ "FileType" }, {
   callback = function()
     if require("nvim-treesitter.parsers").has_parser() then
@@ -163,6 +164,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   end,
 })
 
+--- Better soft wraps for text files
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "text", "org" },
   callback = function()
