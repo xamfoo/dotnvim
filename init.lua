@@ -174,15 +174,6 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
--- Disable copilot in every buffer by default
-vim.api.nvim_create_autocmd('BufEnter', {
-  group = vim.api.nvim_create_augroup('copilot-disable', { clear = true }),
-  pattern = '*',
-  callback = function()
-    vim.b.copilot_enabled = false
-  end,
-})
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -209,6 +200,16 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+  {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    build = 'make tiktoken', -- Only on MacOS or Linux
+    dependencies = {
+      'github/copilot.vim',
+      'nvim-lua/plenary.nvim',
+    },
+    event = 'VeryLazy',
+    opts = {},
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -316,6 +317,20 @@ require('lazy').setup({
   {
     'github/copilot.vim',
     event = 'VeryLazy',
+    init = function()
+      -- Disable copilot in every buffer by default
+      vim.api.nvim_create_autocmd('BufEnter', {
+        group = vim.api.nvim_create_augroup('copilot-disable', { clear = true }),
+        pattern = '*',
+        callback = function()
+          vim.b.copilot_enabled = false
+        end,
+      })
+
+      if vim.env.COPILOT_ENTERPRISE_URI then
+        vim.g.copilot_enterprise_uri = vim.env.COPILOT_ENTERPRISE_URI
+      end
+    end,
   },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
