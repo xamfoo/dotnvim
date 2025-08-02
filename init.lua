@@ -536,11 +536,11 @@ require('lazy').setup({
         markdown = { 'markdownlint-cli2' },
         nix = { 'nixfmt' },
         python = function(bufnr)
-          if require('conform').get_formatter_info('ruff_format', bufnr).available then
+          local conform = require 'conform'
+          if conform.get_formatter_info('ruff_format', bufnr).available then
             return { 'ruff_format' }
-          else
-            return { 'isort', 'black' }
           end
+          return { 'isort', 'black' }
         end,
         typescript = { 'eslint_d', 'prettierd', 'prettier', stop_after_first = true },
       },
@@ -549,7 +549,7 @@ require('lazy').setup({
       },
       formatters = {},
     },
-    config = function()
+    init = function()
       vim.api.nvim_create_autocmd('FileType', {
         pattern = '*',
         callback = function()
