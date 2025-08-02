@@ -174,6 +174,15 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Disable copilot in every buffer by default
+vim.api.nvim_create_autocmd('BufEnter', {
+  group = vim.api.nvim_create_augroup('copilot-disable', { clear = true }),
+  pattern = '*',
+  callback = function()
+    vim.b.copilot_enabled = false
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -303,6 +312,10 @@ require('lazy').setup({
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
+  },
+  {
+    'github/copilot.vim',
+    event = 'VeryLazy',
   },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
