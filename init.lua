@@ -208,6 +208,8 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
     },
     event = 'VeryLazy',
+    ---@module "CopilotChat"
+    ---@type CopilotChat.setupOpts
     opts = {},
   },
   { -- Collection of various small independent plugins/modules
