@@ -209,8 +209,11 @@ require('lazy').setup({
     },
     event = 'VeryLazy',
     ---@module "CopilotChat"
-    ---@type CopilotChat.setupOpts
-    opts = {},
+    ---@type CopilotChat.config.Config
+    opts = {
+      allow_insecure = vim.env.COPILOT_PROXY_STRICT_SSL ~= '0',
+      proxy = vim.env.COPILOT_PROXY or nil,
+    },
   },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -329,6 +332,12 @@ require('lazy').setup({
         end,
       })
 
+      if vim.env.COPILOT_PROXY then
+        vim.g.copilot_proxy = vim.env.COPILOT_PROXY
+      end
+      if vim.env.COPILOT_STRICT_SSL then
+        vim.g.copilot_proxy_strict_ssl = vim.env.COPILOT_PROXY_STRICT_SSL ~= '0'
+      end
       if vim.env.COPILOT_ENTERPRISE_URI then
         vim.g.copilot_enterprise_uri = vim.env.COPILOT_ENTERPRISE_URI
       end
