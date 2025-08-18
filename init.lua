@@ -334,12 +334,27 @@ require('lazy').setup({
     'github/copilot.vim',
     event = 'VeryLazy',
     init = function()
-      -- Disable copilot in every buffer by default
-      vim.api.nvim_create_autocmd('BufEnter', {
+      -- Disable copilot in every buffer by default but enable Copilot if file
+      -- is trackable by git. We assume that if a file can be commited to a
+      -- repository, it should not contain secrets to be leaked to Copilot API.
+      vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
         group = vim.api.nvim_create_augroup('copilot-disable', { clear = true }),
         pattern = '*',
-        callback = function()
+        callback = function(args)
           vim.b.copilot_enabled = false
+          if vim.fn.executable 'git' == 1 then
+            local path = vim.fn.expand(args.file)
+            vim.fn.jobstart({ 'git', 'check-ignore', '--quiet', '--', path }, {
+              on_exit = function(_, code)
+                if code ~= 0 then
+                  -- Enable Copilot in main thread
+                  vim.schedule(function()
+                    vim.b[args.buf].copilot_enabled = true
+                  end)
+                end
+              end,
+            })
+          end
         end,
       })
 
