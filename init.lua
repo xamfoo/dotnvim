@@ -210,7 +210,7 @@ require('lazy').setup({
     ---@module "CopilotChat"
     ---@type CopilotChat.config.Config
     opts = {
-      allow_insecure = vim.env.COPILOT_PROXY_STRICT_SSL ~= '0',
+      allow_insecure = vim.env.COPILOT_PROXY_STRICT_SSL == '0',
       proxy = vim.env.COPILOT_PROXY or nil,
     },
   },
