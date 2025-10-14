@@ -565,6 +565,16 @@ require('lazy').setup({
     version = false,
     lazy = true,
   },
+  {
+    'olimorris/codecompanion.nvim',
+    opts = {
+      allow_insecure = vim.env.COPILOT_PROXY_STRICT_SSL == '0',
+      proxy = vim.env.COPILOT_PROXY or nil,
+    },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
