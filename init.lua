@@ -369,72 +369,6 @@ require('lazy').setup({
       end
     end,
   },
-  { -- Emacs org-super-agenda clone
-    'hamidi-dev/org-super-agenda.nvim',
-    event = 'VeryLazy',
-    dependencies = {
-      'nvim-orgmode/orgmode',
-    },
-    config = function()
-      local res = {}
-      local handle =
-        io.popen(string.format('find %q -type f -maxdepth 6 -name "*.org"', vim.fn.getcwd()))
-      if handle then
-        for f in handle:lines() do
-          res[#res + 1] = f
-        end
-        handle:close()
-      end
-      require('org-super-agenda').setup {
-        -- Where to look for .org files
-        org_files = res,
-        org_directories = vim.tbl_filter(function(dir)
-          return vim.fn.isdirectory(vim.fn.expand(dir)) == 1
-        end, {
-          '~/org',
-        }),
-        exclude_files = {},
-        exclude_directories = {},
-
-        -- Agenda keymaps (inline comments explain each)
-        -- keymaps = {
-        --   filter_reset      = 'oa', -- reset all filters
-        --   toggle_other      = 'oo', -- toggle catch-all "Other" section
-        --   filter            = 'of', -- live filter (exact text)
-        --   filter_fuzzy      = 'oz', -- live filter (fuzzy)
-        --   filter_query      = 'oq', -- advanced query input
-        --   undo              = 'u',  -- undo last change
-        --   reschedule        = 'cs', -- set/change SCHEDULED
-        --   set_deadline      = 'cd', -- set/change DEADLINE
-        --   cycle_todo        = 't',  -- cycle TODO state
-        --   reload            = 'r',  -- refresh agenda
-        --   refile            = 'R',  -- refile via Telescope/org-telescope
-        --   hide_item         = 'x',  -- hide current item
-        --   preview           = 'K',  -- preview headline content
-        --   reset_hidden      = 'X',  -- clear hidden list
-        --   toggle_duplicates = 'D',  -- duplicate items may appear in multiple groups
-        --   cycle_view        = 'ov', -- switch view (classic/compact)
-        -- },
-
-        -- Defaults & behavior
-        -- upcoming_days      = 10,
-        -- hide_empty_groups  = true,      -- drop blank sections
-        -- keep_order         = false,     -- keep original org order (rarely useful)
-        -- allow_duplicates   = false,     -- if true, an item can live in multiple groups
-        -- group_format       = '* %s',    -- group header format
-        -- other_group_name   = 'Other',
-        -- show_other_group   = false,     -- show catch-all section
-        -- show_tags          = true,      -- draw tags on the right
-        -- show_filename      = true,      -- include [filename]
-        -- heading_max_length = 70,
-        -- persist_hidden     = false,     -- keep hidden items across reopen
-        -- view_mode          = 'classic', -- 'classic' | 'compact'
-        -- classic = { heading_order={'filename','todo','priority','headline'}, short_date_labels=false, inline_dates=true },
-        -- compact = { filename_min_width=10, label_min_width=12 },
-      }
-      vim.keymap.set('n', '<leader>osA', '<cmd>OrgSuperAgenda!<cr>')
-    end,
-  },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -1038,26 +972,6 @@ require('lazy').setup({
       for lsName, config in pairs(servers) do
         lspconfig[lsName].setup(config)
       end
-    end,
-  },
-  { -- Emacs Orgmode clone
-    'nvim-orgmode/orgmode',
-    event = 'VeryLazy',
-    config = function()
-      local cwd = vim.fn.getcwd()
-      require('orgmode').setup {
-        org_agenda_files = {
-          '~/org/**/*',
-          cwd .. '/*/*.org',
-          cwd .. '/*/*/*.org',
-          cwd .. '/*/*/*/*.org',
-          cwd .. '/*/*/*/*/*.org',
-          cwd .. '/*/*/*/*/*/*.org',
-        },
-        org_default_notes_file = vim.fn.filereadable(cwd .. '/refile.org') == 1
-            and (cwd .. '/refile.org')
-          or '~/org/refile.org',
-      }
     end,
   },
   { -- Highlight, edit, and navigate code
