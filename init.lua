@@ -342,16 +342,29 @@ require('lazy').setup({
         pattern = '*',
         callback = function(args)
           vim.b.copilot_enabled = false
+          local path = vim.fn.expand(args.file)
+          if path == '' or vim.fn.filereadable(path) == 0 then
+            vim.b.copilot_enabled = true
+            return -- Use default settings for unsaved or non-existent files
+          end
           if vim.fn.executable 'git' == 1 then
-            local path = vim.fn.expand(args.file)
-            vim.fn.jobstart({ 'git', 'check-ignore', '--quiet', '--', path }, {
-              on_exit = function(_, code)
-                if code ~= 0 then
-                  -- Enable Copilot in main thread
-                  vim.schedule(function()
-                    vim.b[args.buf].copilot_enabled = true
-                  end)
+            local dir = vim.fn.fnamemodify(path, ':h')
+            vim.fn.jobstart({ 'git', '-C', dir, 'rev-parse', '--show-toplevel' }, {
+              on_exit = function(_, non_git_repo)
+                if non_git_repo ~= 0 then
+                  -- Not in a git repo, do not enable Copilot
+                  return
                 end
+                vim.fn.jobstart({ 'git', 'check-ignore', '--quiet', '--', path }, {
+                  on_exit = function(_, is_ignored)
+                    if is_ignored ~= 0 then
+                      -- Enable Copilot in main thread
+                      vim.schedule(function()
+                        vim.b[args.buf].copilot_enabled = true
+                      end)
+                    end
+                  end,
+                })
               end,
             })
           end
