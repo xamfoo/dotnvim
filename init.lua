@@ -565,12 +565,14 @@ require('lazy').setup({
   },
   {
     'olimorris/codecompanion.nvim',
+    version = '^18.0.0',
     opts = {
       allow_insecure = vim.env.COPILOT_PROXY_STRICT_SSL == '0',
       proxy = vim.env.COPILOT_PROXY or nil,
     },
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
     },
   },
   { -- Autoformat
