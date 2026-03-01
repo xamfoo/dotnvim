@@ -490,11 +490,36 @@ require('lazy').setup({
     opts = {
       adapters = {
         http = {
+          copilot = function()
+            local copilot = require 'codecompanion.adapters.http.copilot'
+            return require('codecompanion.adapters').extend('copilot', {
+              schema = {
+                temperature = {
+                  enabled = function(self)
+                    local default_enabled = copilot.schema.temperature.enabled(self)
+                    if not default_enabled then
+                      return default_enabled
+                    end
+                    local model = self.schema.model.default
+                    if type(model) == 'function' then
+                      model = model()
+                    end
+                    return not vim.startswith(model, 'oswe')
+                  end,
+                },
+              },
+            })
+          end,
           opts = {
             allow_insecure = vim.env.COPILOT_PROXY_STRICT_SSL == '0',
             proxy = vim.env.COPILOT_PROXY or nil,
             show_model_choices = true,
           },
+        },
+      },
+      display = {
+        chat = {
+          show_tools_processing = true,
         },
       },
       extensions = {
@@ -523,9 +548,9 @@ require('lazy').setup({
             auto_generate_title = true,
             title_generation_opts = {
               ---Adapter for generating titles (defaults to current chat adapter)
-              adapter = nil, -- "copilot"
+              adapter = 'copilot', -- "copilot"
               ---Model for generating titles (defaults to current chat model)
-              model = nil, -- "gpt-4o"
+              model = 'gpt-4o', -- "gpt-4o"
               ---Number of user prompts after which to refresh the title (0 to disable)
               refresh_every_n_prompts = 0, -- e.g., 3 to refresh after every 3rd user prompt
               ---Maximum number of times to refresh the title (default: 3)
