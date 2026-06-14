@@ -490,6 +490,13 @@ require('lazy').setup({
     opts = {
       adapters = {
         http = {
+          anthropic = function()
+            return require('codecompanion.adapters').extend('anthropic', {
+              env = {
+                api_key = vim.env.ANTHROPIC_API_KEY or vim.env.ANTHROPIC_API_KEY_CMD or nil,
+              },
+            })
+          end,
           copilot = function()
             local copilot = require 'codecompanion.adapters.http.copilot'
             return require('codecompanion.adapters').extend('copilot', {
