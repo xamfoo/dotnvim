@@ -479,13 +479,27 @@ require('lazy').setup({
   {
     'olimorris/codecompanion.nvim',
     version = '^19.0.0',
+    -- This will provide type hinting with LuaLS
+    ---@module "codecompanion"
+    ---@type CodeCompanion.AdapterArgs
     opts = {
+      interactions = {
+        chat = {
+          adapter = (vim.env.ANTHROPIC_API_KEY or vim.env.ANTHROPIC_API_KEY_CMD) and 'anthropic'
+            or 'copilot',
+        },
+      },
       adapters = {
         http = {
           anthropic = function()
             return require('codecompanion.adapters').extend('anthropic', {
               env = {
                 api_key = vim.env.ANTHROPIC_API_KEY or vim.env.ANTHROPIC_API_KEY_CMD or nil,
+              },
+              schema = {
+                model = {
+                  default = 'claude-sonnet-4-6',
+                },
               },
             })
           end,
