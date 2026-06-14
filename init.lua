@@ -382,6 +382,10 @@ require('lazy').setup({
       end
     end,
   },
+  { -- Useful status updates for LSP.
+    'j-hui/fidget.nvim',
+    opts = {},
+  },
   {
     'kylechui/nvim-surround',
     event = 'VeryLazy',
@@ -614,11 +618,16 @@ require('lazy').setup({
             },
           },
         },
-        spinner = {},
+        spinner = {
+          opts = {
+            style = 'fidget',
+          },
+        },
       },
     },
     dependencies = {
-      'franco-ruggeri/codecompanion-spinner.nvim',
+      'j-hui/fidget.nvim', -- For lalitmee/codecompanion-spinners.nvim
+      'lalitmee/codecompanion-spinners.nvim',
       'nvim-lua/plenary.nvim',
       'nvim-treesitter/nvim-treesitter',
       'ravitemer/codecompanion-history.nvim',
@@ -859,8 +868,7 @@ require('lazy').setup({
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim', opts = {} },
+      'j-hui/fidget.nvim',
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
     },
