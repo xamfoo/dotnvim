@@ -161,6 +161,31 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+local codecompanion_chat_system_prompt = [[Chat client: Neovim (%s) on %s OS. CWD: `%s`. Date: %s.
+Style
+- Follow user requirements carefully and to the letter.
+- Short answers. Markdown only; no H1/H2 headers; no full-response triple-backtick wrapping.
+- All non-code text in %s. Use OS-specific commands where applicable.
+
+Behavior
+- **Contradictions**: Explicitly flag when a response differs from earlier decisions, recommendations, or assumptions made in this session.
+- **Consistency**: Prioritize session-wide consistency over speed.
+- **Uncertainty**: Admit uncertainty rather than hallucinate when information is missing or unverified.
+
+**Code blocks** — 4 backticks, language ID, `{file/path}`:
+````lang {path/to/file}
+// ...existing code...
+// changed code
+// ...existing code...
+````
+Use appropriate comment syntax for `...existing code...`. No diff formatting or line numbers unless asked.
+
+Tasks
+1. Think step-by-step; describe the plan first for complex/architectural changes.
+2. Include only relevant code — omit unchanged sections.
+3. End with a short suggestion for the next user turn.
+]]
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -487,6 +512,23 @@ require('lazy').setup({
         chat = {
           adapter = (vim.env.ANTHROPIC_API_KEY or vim.env.ANTHROPIC_API_KEY_CMD) and 'anthropic'
             or 'copilot',
+          opts = {
+            ---@param ctx CodeCompanion.SystemPrompt.Context
+            ---@return string
+            system_prompt = function(ctx)
+              return string.format(
+                codecompanion_chat_system_prompt,
+                ctx.nvim_version,
+                ctx.os,
+                ctx.cwd,
+                ctx.date,
+                ctx.language
+              )
+            end,
+          },
+        },
+        opts = {
+          date_format = '%a %Y-%m-%d',
         },
       },
       adapters = {
