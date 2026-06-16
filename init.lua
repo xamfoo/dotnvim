@@ -1143,6 +1143,7 @@ require('lazy').setup({
         'query',
         'vim',
         'vimdoc',
+        'yaml',
       }
       require('nvim-treesitter').install(parsers)
       local function treesitter_try_attach(buf, language)
