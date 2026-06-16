@@ -835,6 +835,10 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          preview = {
+            -- For compatibility with treesitter main branch as of 2026-06-16
+            treesitter = false,
+          },
           vimgrep_arguments = {
             'rg',
             '--color=never',
