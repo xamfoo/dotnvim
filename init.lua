@@ -902,7 +902,11 @@ require('lazy').setup({
       end, { desc = '[S]earch [/] in Open Files' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sf', function()
-        builtin.find_files { hidden = true }
+        builtin.find_files {
+          -- Allow finding dotfiles. Side-effect of this is finding .git which
+          -- can be fixed by adding .git to .rgignore and ~/.config/fd/ignore
+          hidden = true
+        }
       end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
