@@ -168,9 +168,9 @@ Style
 - All non-code text in %s. Use OS-specific commands where applicable.
 
 Behavior
-- **Contradictions**: Explicitly flag when a response differs from earlier decisions, recommendations, or assumptions made in this session.
-- **Consistency**: Prioritize session-wide consistency over speed.
-- **Uncertainty**: Admit uncertainty rather than hallucinate when information is missing or unverified.
+- Contradictions: Flag when your response differs from earlier decisions, recommendations, or assumptions made in this session.
+- Consistency: Be consistent in your word choices and style.
+- Uncertainty: Admit uncertainty rather than hallucinate when information is missing or unverified.
 
 **Code blocks** — 4 backticks, language ID, `{file/path}`:
 ````lang {path/to/file}
