@@ -212,21 +212,6 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
-  {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    build = 'make tiktoken', -- Only on MacOS or Linux
-    dependencies = {
-      'github/copilot.vim',
-      'nvim-lua/plenary.nvim',
-    },
-    event = 'VeryLazy',
-    ---@module "CopilotChat"
-    ---@type CopilotChat.config.Config
-    opts = {
-      allow_insecure = vim.env.COPILOT_PROXY_STRICT_SSL == '0',
-      proxy = vim.env.COPILOT_PROXY or nil,
-    },
-  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
