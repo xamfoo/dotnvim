@@ -88,6 +88,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 vim.opt.breakindent = true
+vim.opt.fillchars:append { diff = "╱" }
 vim.opt.foldlevel = 99
 vim.opt.inccommand = 'split'
 vim.opt.list = true
@@ -265,6 +266,16 @@ require('lazy').setup({
     lazy = false, -- Don't lazy load
     priority = 1000, -- Load first
     config = function()
+      require('nightfox').setup {
+        groups = {
+          all = {
+            DiffChange = { bg = '#002249' },
+            DiffDelete = { bg = '#69002e' },
+            DiffAdd = { bg = '#004c2b' },
+            DiffText = { bg = '#005582' },
+          },
+        },
+      }
       vim.cmd.colorscheme 'nightfox'
     end,
   },
