@@ -212,6 +212,24 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+  { -- Browse diffs in a tab
+    'dlyongemallo/diffview-plus.nvim',
+    version = '*',
+    opts = {
+      auto_close_on_empty = true,
+      clean_up_buffers = true,
+      diffopt = { algorithm = 'histogram' },
+      enhanced_diff_hl = true,
+      file_panel = {
+        win_config = {
+          win_opts = {
+            linebreak = true,
+            wrap = true,
+          },
+        },
+      },
+    },
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
