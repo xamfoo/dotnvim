@@ -662,6 +662,10 @@ require('lazy').setup({
       'ravitemer/codecompanion-history.nvim',
     },
   },
+  { -- Highlight the exact diff, based on characters and words
+    'rickhowe/diffchar.vim',
+    version = '*',
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
