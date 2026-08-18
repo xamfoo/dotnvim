@@ -413,6 +413,129 @@ require('lazy').setup({
     'j-hui/fidget.nvim',
     opts = {},
   },
+  { -- Jujutsu (jj) support
+    'jceb/jiejie.nvim',
+    -- Custom configuration settings
+    opts = {
+      -- Excluded revset expression, see https://docs.jj-vcs.dev/latest/revsets/ for the full language
+      excluded_revset = 'bookmarks(glob:"renovate/*") | tracked_remote_bookmarks(glob:"renovate/*") | untracked_remote_bookmarks(glob:"renovate/*")',
+      default_view = 1,
+      dynamic_views = {
+        -- Dynamic view that dispalys all merges, see https://docs.jj-vcs.dev/latest/revsets/ for the full language
+        { revset = 'merges()' },
+      },
+      log_revisions = 10,
+    },
+    config = function(_, opts)
+      require('jiejie').setup(opts)
+      -- Override :J and :JJ to behave like :G in fugitive (open in current buffer)
+      vim.api.nvim_create_user_command('J', function(args)
+        local context = require 'jiejie.context'
+        local parsers = require 'jiejie.parsers'
+        local api = require 'jiejie.api'
+        local buffer = require 'jiejie.buffer'
+        local cmd = #args.fargs > 0 and args.fargs[1] or 'log'
+        -- Commands that need interactive TTY (like :G rebase -i)
+        local interactive_cmds = {
+          ['commit'] = { '--interactive', '-i' },
+          ['rebase'] = { '--interactive', '-i' },
+          ['edit'] = { '--interactive', '-i' },
+          ['squash'] = { '--interactive', '-i' },
+        }
+        local is_interactive = false
+        if interactive_cmds[cmd] then
+          for _, flag in ipairs(interactive_cmds[cmd]) do
+            if vim.tbl_contains(args.fargs, flag) then
+              is_interactive = true
+              break
+            end
+          end
+        end
+        if cmd == 'log' then
+          -- Open log respecting :tab, :vertical, etc. (like :G)
+          local ctx = context.get_context()
+          if not ctx then
+            vim.notify('Not in a jj repository', vim.log.levels.ERROR)
+            return
+          end
+          -- Build the log buffer filename (same as buffer.focus does internally)
+          local filename = parsers.join_url {
+            root = ctx.root,
+            is_log = true,
+            is_oplog = false,
+            is_evolog = false,
+            revision = nil,
+            workspace = 'default',
+          }
+          -- Handle :tab J (open in new tab, full tab)
+          if args.smods.tab and args.smods.tab > 0 then
+            vim.cmd.tabedit(filename)
+            return
+          end
+          -- Use the buffer.focus function which respects smods.vertical
+          buffer.focus(ctx, {
+            vertical = args.smods.vertical,
+            buffer_type = buffer.BUFFER_TYPE.LOG,
+          })
+        elseif is_interactive then
+          -- Run interactive commands in a terminal (like :G rebase -i)
+          local ctx = context.get_context()
+          assert(ctx, 'Working directory does not belong to a Jujutsu repository')
+          local full_cmd = 'jj ' .. table.concat(args.fargs, ' ')
+          -- Handle :tab J commit --interactive (open in new tab)
+          if args.smods.tab and args.smods.tab > 0 then
+            vim.cmd.tabnew()
+          elseif args.smods.vertical then
+            vim.cmd.vsplit()
+          elseif args.smods.horizontal then
+            vim.cmd.split()
+          end
+          vim.cmd('terminal ' .. full_cmd)
+          vim.cmd 'startinsert'
+          -- Close window/tab when terminal exits
+          local term_buf = vim.api.nvim_get_current_buf()
+          vim.api.nvim_create_autocmd('TermClose', {
+            buffer = term_buf,
+            once = true,
+            callback = function()
+              if args.smods.tab and args.smods.tab > 0 then
+                vim.cmd.tabclose()
+              else
+                vim.cmd.close()
+              end
+            end,
+          })
+        else
+          -- For other jj commands, use the original behavior
+          local ctx = context.get_context()
+          assert(ctx, 'Working directory does not belong to a Jujutsu repository')
+          local command = cmd
+          api.cli(ctx, command, { args = vim.list_slice(args.fargs, 2) })
+        end
+      end, { desc = 'Jujutsu command wrapper (like :G)', nargs = '*', complete = 'file' })
+      -- Also override :JJ and :Jj (preserve :tab, :vertical modifiers)
+      vim.api.nvim_create_user_command('JJ', function(args)
+        local cmd = 'J ' .. table.concat(args.fargs, ' ')
+        if args.smods.tab and args.smods.tab > 0 then
+          cmd = 'tab ' .. cmd
+        end
+        if args.smods.vertical then
+          cmd = 'vertical ' .. cmd
+        end
+        vim.cmd(cmd)
+      end, { desc = 'Jujutsu command wrapper (like :G)', nargs = '*', complete = 'file' })
+      vim.api.nvim_create_user_command('Jj', function(args)
+        local cmd = 'J ' .. table.concat(args.fargs, ' ')
+        if args.smods.tab and args.smods.tab > 0 then
+          cmd = 'tab ' .. cmd
+        end
+        if args.smods.vertical then
+          cmd = 'vertical ' .. cmd
+        end
+        vim.cmd(cmd)
+      end, { desc = 'Jujutsu command wrapper (like :G)', nargs = '*', complete = 'file' })
+    end,
+  },
   {
     'kylechui/nvim-surround',
     event = 'VeryLazy',
