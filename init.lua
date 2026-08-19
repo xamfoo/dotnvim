@@ -88,7 +88,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 vim.opt.breakindent = true
-vim.opt.fillchars:append { diff = "╱" }
+vim.opt.fillchars:append { diff = '╱' }
 vim.opt.foldlevel = 99
 vim.opt.inccommand = 'split'
 vim.opt.list = true
@@ -1054,7 +1054,7 @@ require('lazy').setup({
         builtin.find_files {
           -- Allow finding dotfiles. Side-effect of this is finding .git which
           -- can be fixed by adding .git to .rgignore and ~/.config/fd/ignore
-          hidden = true
+          hidden = true,
         }
       end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
