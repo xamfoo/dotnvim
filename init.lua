@@ -162,6 +162,14 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+-- Set filetype for `.bb` files to `clojure`
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+  pattern = { '*.bb' },
+  callback = function()
+    vim.opt_local.filetype = 'clojure'
+  end,
+})
+
 local codecompanion_chat_system_prompt = [[Chat client: Neovim (%s) on %s OS. CWD: `%s`. Date: %s.
 Style
 - Follow user requirements carefully and to the letter.
