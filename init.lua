@@ -1013,6 +1013,38 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
+      -- User command for find_files with overridable options.
+      -- Defaulting hidden=true to allow finding dotfiles. Side-effect of this
+      -- is finding .git which can be fixed by adding .git to .rgignore and
+      -- ~/.config/fd/ignore
+      -- Delegates to :Telescope find_files which properly handles hidden/no_ignore flags
+      vim.api.nvim_create_user_command('FindFiles', function(opts)
+        local cmd = 'Telescope find_files hidden=true'
+        if opts.args ~= '' then
+          cmd = cmd .. ' ' .. opts.args
+        end
+        vim.cmd(cmd)
+      end, {
+        nargs = '*',
+        complete = function(arg_lead)
+          -- Complete option names (hidden=, no_ignore=, etc.)
+          local opts_list = { 'hidden=', 'no_ignore=', 'no_ignore_parent=', 'follow=', 'cwd=' }
+          -- If arg_lead contains '=', complete the value (true/false)
+          if arg_lead:find('=', 1, true) then
+            local prefix = arg_lead:match('^(.+=)')
+            if prefix then
+              return vim.tbl_filter(function(v)
+                return v:find(arg_lead:sub(#prefix + 1), 1, true) == 1
+              end, { 'true', 'false' })
+            end
+          end
+          return vim.tbl_filter(function(opt)
+            return opt:find(arg_lead, 1, true) == 1
+          end, opts_list)
+        end,
+        desc = 'Find files (default: hidden=true). Override: :FindFiles hidden=false no_ignore=true',
+      })
+
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set(
@@ -1050,13 +1082,8 @@ require('lazy').setup({
         }
       end, { desc = '[S]earch [/] in Open Files' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sf', function()
-        builtin.find_files {
-          -- Allow finding dotfiles. Side-effect of this is finding .git which
-          -- can be fixed by adding .git to .rgignore and ~/.config/fd/ignore
-          hidden = true,
-        }
-      end, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', '<cmd>FindFiles<CR>', { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sF', ':FindFiles ', { desc = '[S]earch [F]iles (with args)' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
