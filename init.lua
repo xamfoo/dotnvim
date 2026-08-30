@@ -104,6 +104,16 @@ vim.opt.sidescrolloff = 2
 vim.opt.signcolumn = 'yes'
 vim.opt.swapfile = false
 
+vim.api.nvim_create_autocmd('UIEnter', {
+  once = true,
+  callback = function()
+    if vim.g.termfeatures and vim.g.termfeatures.osc52 then
+      vim.g.clipboard = 'osc52'
+    end
+    vim.opt.clipboard = 'unnamedplus'
+  end,
+})
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -1034,7 +1044,7 @@ require('lazy').setup({
           local opts_list = { 'hidden=', 'no_ignore=', 'no_ignore_parent=', 'follow=', 'cwd=' }
           -- If arg_lead contains '=', complete the value (true/false)
           if arg_lead:find('=', 1, true) then
-            local prefix = arg_lead:match('^(.+=)')
+            local prefix = arg_lead:match '^(.+=)'
             if prefix then
               return vim.tbl_filter(function(v)
                 return v:find(arg_lead:sub(#prefix + 1), 1, true) == 1
