@@ -423,6 +423,9 @@ require('lazy').setup({
   },
   { -- Jujutsu (jj) support
     'jceb/jiejie.nvim',
+    cond = function()
+      return vim.fn.executable 'jj' == 1
+    end,
     -- Custom configuration settings
     opts = {
       -- Excluded revset expression, see https://docs.jj-vcs.dev/latest/revsets/ for the full language
