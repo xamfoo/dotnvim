@@ -104,13 +104,40 @@ vim.opt.sidescrolloff = 2
 vim.opt.signcolumn = 'yes'
 vim.opt.swapfile = false
 
-vim.api.nvim_create_autocmd('UIEnter', {
-  once = true,
-  callback = function()
-    if vim.g.termfeatures and vim.g.termfeatures.osc52 then
-      vim.g.clipboard = 'osc52'
+vim.api.nvim_create_autocmd('TermResponse', {
+  group = vim.api.nvim_create_augroup('detect-osc52', { clear = true }),
+  callback = function(ev)
+    local resp = ev.data.sequence
+
+    -- Match Primary Device Attributes (DA1) response: \027[?<params>c
+    local params = resp:match '^\027%[%?([%d;]+)c$'
+    if params then
+      for code in params:gmatch '%d+' do
+        if code == '52' then
+          local function paste()
+            return {
+              vim.fn.split(vim.fn.getreg '', '\n'),
+              vim.fn.getregtype '',
+            }
+          end
+          vim.g.clipboard = {
+            name = 'OSC 52',
+            copy = {
+              ['+'] = require('vim.ui.clipboard.osc52').copy '+',
+              ['*'] = require('vim.ui.clipboard.osc52').copy '*',
+            },
+            -- Some terminals don't support pasting via OSC 52,
+            -- so we use the default clipboard provider for pasting.
+            paste = {
+              ['+'] = paste,
+              ['*'] = paste,
+            },
+          }
+          vim.opt.clipboard = 'unnamedplus'
+          return true -- Deletes this autocmd
+        end
+      end
     end
-    vim.opt.clipboard = 'unnamedplus'
   end,
 })
 
