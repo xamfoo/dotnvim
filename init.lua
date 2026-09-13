@@ -1288,6 +1288,38 @@ require('lazy').setup({
           },
         },
         ansiblels = {},
+        jsonls = {
+          -- jsonc permits trailing commas; drop jsonls code 519 'Trailing comma'
+          -- warnings without hiding other diagnostics. Neovim uses pull
+          -- diagnostics (textDocument/diagnostic) when the server declares a
+          -- diagnosticProvider, so filter both pull and publish paths.
+          handlers = {
+            ['textDocument/diagnostic'] = function(err, result, ctx, config)
+              if result and result.items then
+                local kept = {}
+                for _, d in ipairs(result.items) do
+                  if tonumber(d.code) ~= 519 then
+                    kept[#kept + 1] = d
+                  end
+                end
+                result.items = kept
+              end
+              return vim.lsp.diagnostic.on_diagnostic(err, result, ctx, config)
+            end,
+            ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
+              if result and result.diagnostics then
+                local kept = {}
+                for _, d in ipairs(result.diagnostics) do
+                  if tonumber(d.code) ~= 519 then
+                    kept[#kept + 1] = d
+                  end
+                end
+                result.diagnostics = kept
+              end
+              return vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+            end,
+          },
+        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes { ...},
