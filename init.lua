@@ -497,6 +497,48 @@ require('lazy').setup({
         local parsers = require 'jiejie.parsers'
         local api = require 'jiejie.api'
         local buffer = require 'jiejie.buffer'
+        -- The repo belongs to the buffer, not the cwd. Walk up from the
+        -- buffer's file to the nearest .jj directory, so nested jj
+        -- repositories resolve exactly like jj itself would.
+        -- The walk is reimplemented here because jiejie exposes no API for
+        -- it: context.get_context(root) only treats its argument as a
+        -- trusted root ("root or jujutsu.get_root()"), and the latter
+        -- shells out to `jj workspace root` and silently degrades to the
+        -- cwd when the buffer isn't a real file — the exact wrong-repo
+        -- hazard nested repositories expose. Don't simplify this away.
+        local jj_root = function()
+          -- jiejie caches the root in its own buffers (fugitive's
+          -- b:git_dir). Not just a fast path: :J from inside a
+          -- log/oplog/evolog buffer must resolve to that buffer's repo,
+          -- and their synthetic jj:// names are un-walkable anyway.
+          if vim.b.jiejie_root then
+            return vim.b.jiejie_root
+          end
+          -- Unnamed buffers (scratch, terminals) expand to the cwd's
+          -- directory, so resolution quietly becomes cwd-based — old
+          -- behavior, kept on purpose rather than as an oversight.
+          local dir = vim.fn.expand '%:p:h'
+          while dir ~= '' and dir ~= '/' do
+            local stat = vim.uv.fs_stat(vim.fs.joinpath(dir, '.jj'))
+            if stat and stat.type == 'directory' then
+              return dir
+            end
+            local parent = vim.fn.fnamemodify(dir, ':h')
+            if parent == dir then
+              break
+            end
+            dir = parent
+          end
+          -- No .jj on the way up: last resort, wherever the cwd lives
+          return require('jiejie.jujutsu').get_root()
+        end
+        -- One resolution, up front, from the buffer's file — not the cwd.
+        local ctx = context.get_context(jj_root())
+        if not ctx then
+          local where = vim.fn.expand '%:p' ~= '' and vim.fn.expand '%' or vim.fn.getcwd()
+          vim.notify('Not in a Jujutsu repository: ' .. where, vim.log.levels.ERROR)
+          return
+        end
         local cmd = #args.fargs > 0 and args.fargs[1] or 'log'
         -- Commands that need interactive TTY (like :G rebase -i)
         local interactive_cmds = {
@@ -516,11 +558,6 @@ require('lazy').setup({
         end
         if cmd == 'log' then
           -- Open log respecting :tab, :vertical, etc. (like :G)
-          local ctx = context.get_context()
-          if not ctx then
-            vim.notify('Not in a jj repository', vim.log.levels.ERROR)
-            return
-          end
           -- Build the log buffer filename (same as buffer.focus does internally)
           local filename = parsers.join_url {
             root = ctx.root,
@@ -541,10 +578,13 @@ require('lazy').setup({
             buffer_type = buffer.BUFFER_TYPE.LOG,
           })
         elseif is_interactive then
-          -- Run interactive commands in a terminal (like :G rebase -i)
-          local ctx = context.get_context()
-          assert(ctx, 'Working directory does not belong to a Jujutsu repository')
-          local full_cmd = 'jj ' .. table.concat(args.fargs, ' ')
+          -- Run interactive commands in a terminal (like :G rebase -i).
+          -- Pin the repo with -R (like fugitive's --git-dir), so the
+          -- terminal's cwd — which is Neovim's cwd — never gets a say.
+          local full_cmd = ('jj -R %s %s'):format(
+            vim.fn.shellescape(ctx.root),
+            table.concat(args.fargs, ' ')
+          )
           -- Handle :tab J commit --interactive (open in new tab)
           if args.smods.tab and args.smods.tab > 0 then
             vim.cmd.tabnew()
@@ -569,9 +609,9 @@ require('lazy').setup({
             end,
           })
         else
-          -- For other jj commands, use the original behavior
-          local ctx = context.get_context()
-          assert(ctx, 'Working directory does not belong to a Jujutsu repository')
+          -- For other jj commands, use the original behavior.
+          -- api.cli already runs with cwd = ctx.root, so this is
+          -- repo-relative once ctx is resolved from the buffer's file.
           local command = cmd
           api.cli(ctx, command, { args = vim.list_slice(args.fargs, 2) })
         end
