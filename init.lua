@@ -274,7 +274,22 @@ require('lazy').setup({
           },
         },
       },
+      view = {
+        default = { layout = 'diff1_inline' },
+        cycle_layouts = {
+          default = { 'diff1_inline', 'diff2_horizontal' },
+        },
+      },
     },
+    config = function(_, opts)
+      require('diffview').setup(opts)
+      vim.keymap.set(
+        'n',
+        '<leader>dO',
+        ':DiffviewOpen --imply-local ',
+        { desc = '[D]iffview [O]open (with args)' }
+      )
+    end,
   },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
