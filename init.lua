@@ -1125,13 +1125,44 @@ require('lazy').setup({
       -- Defaulting hidden=true to allow finding dotfiles. Side-effect of this
       -- is finding .git which can be fixed by adding .git to .rgignore and
       -- ~/.config/fd/ignore
-      -- Delegates to :Telescope find_files which properly handles hidden/no_ignore flags
+      -- Like :J, the search belongs to the buffer, not the cwd: it anchors at
+      -- the buffer's project root. jiejie's b:jiejie_root cache (fugitive's
+      -- b:git_dir) goes first: it is the only anchor jiejie's synthetic
+      -- jiejie:// log/oplog buffers have — those names don't begin with /, so
+      -- vim.fs.root treats them as cwd-relative and quietly resolves the
+      -- cwd's repo instead of nil (on real files the cache merely restates
+      -- what the walk below computes: jiejie stamps it on first write via
+      -- its BufWritePost). Otherwise the nearest .git/.jj ancestor of the
+      -- buffer's file wins — marker files count, so git worktrees (where
+      -- .git is a file) resolve, and colocated or native jj repos both
+      -- carry .jj. Out-of-repo files yield no root: pass no cwd and
+      -- Telescope falls back to vim's cwd. Unnamed buffers seed from the
+      -- cwd, the same degrade :J documents as kept on purpose.
+      -- :FindFiles cwd=... opts back out to explicit anchoring.
+      -- Delegates to telescope.command.load_command — the same entry point
+      -- :Telescope itself uses — so converting hidden=/no_ignore= into the
+      -- typed opts find_files expects stays Telescope's job. Unlike the old
+      -- `:Telescope find_files ...` string round-trip, values with spaces
+      -- survive (Telescope documents the string API as breaking on e.g.
+      -- cwd=/foo bar). Later args overwrite earlier ones in its opts map,
+      -- so :FindFiles hidden=false still wins over the default.
       vim.api.nvim_create_user_command('FindFiles', function(opts)
-        local cmd = 'Telescope find_files hidden=true'
-        if opts.args ~= '' then
-          cmd = cmd .. ' ' .. opts.args
+        local root_override = false
+        for _, arg in ipairs(opts.fargs) do
+          if arg:find '^cwd=' then
+            root_override = true
+            break
+          end
         end
-        vim.cmd(cmd)
+        local args = { 'hidden=true' }
+        vim.list_extend(args, opts.fargs)
+        if not root_override then
+          local root = vim.b.jiejie_root or vim.fs.root(0, { '.git', '.jj' })
+          if root then
+            table.insert(args, 'cwd=' .. root)
+          end
+        end
+        require('telescope.command').load_command('find_files', unpack(args))
       end, {
         nargs = '*',
         complete = function(arg_lead)
@@ -1150,7 +1181,7 @@ require('lazy').setup({
             return opt:find(arg_lead, 1, true) == 1
           end, opts_list)
         end,
-        desc = 'Find files (default: hidden=true). Override: :FindFiles hidden=false no_ignore=true',
+        desc = 'Find files at the project root of the current buffer (default: hidden=true). Override: :FindFiles cwd=... hidden=false',
       })
 
       -- See `:help telescope.builtin`
